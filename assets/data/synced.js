@@ -1263,6 +1263,14 @@ window.PORTAL_SYNCED = {
           "url": "https://www.dropbox.com/scl/fi/o9qcc6n7rsszwu6onjylk/Burgundy-v3-Product-Page-1080.mp4?rlkey=aum0m7mnevva0gdl0mlawkaug&dl=0",
           "thumb": "assets/synced/gravity-infusers/11cbccb6b2c1f95916a496a50985bbf680042a485359286cb4deb0a78c9a81bf.jpg",
           "file": null
+        },
+        {
+          "name": "WuRussell Burgundy Karate Oct Text",
+          "type": "video",
+          "format": "MP4",
+          "url": "https://www.dropbox.com/scl/fi/vvlpw45jmi0boi7rmsz2e/WuRussell-Burgundy-Karate-Oct-Text.mp4?rlkey=d1dtq2v0k2gbf6g307u6a86ay&dl=0",
+          "thumb": "assets/synced/gravity-infusers/c0a126422825e154b014ddc6c35f8725b702d25ccb959ff95eec1209e5672ff7.jpg",
+          "file": null
         }
       ],
       "Velvet Burgundy / TV Screen Videos": [
@@ -1586,7 +1594,7 @@ window.PORTAL_SYNCED = {
       "Violet Purple / In-Store Marketing": "https://www.dropbox.com/scl/fo/xxoxrw9cfturi9igz8srw/AG9qbPcbU9TCYAr1HOHu6eg?rlkey=8pjpw3xhqc7yyb7o9yijtdxmw&dl=1",
       "Violet Purple / Documents": "https://www.dropbox.com/scl/fo/ae8fj5g9sjn0qizvlatqm/AEOxtEc0hql0oHOSyuuYq_Q?rlkey=4xm183gtwqdmb8evkpg3dm60j&dl=1"
     },
-    "updated": "2026-10-02"
+    "updated": "2026-11-03"
   },
   "Kompact Gravity Infusers": {
     "folders": {
