@@ -27,7 +27,7 @@
      translated. To revise a language, edit only its pack — no code change. */
   var LANGS = { en: "English", es: "Español", de: "Deutsch", it: "Italiano", fr: "Français", pt: "Português", sv: "Svenska", pl: "Polski", da: "Dansk" };
   function isLang(l) { return Object.prototype.hasOwnProperty.call(LANGS, l); }
-  var LANG_VER = "20261002";   // bump with the other asset tokens
+  var LANG_VER = "20261116";   // bump with the other asset tokens
   // Load a language pack once. English is a no-op (it IS the source).
   var _langLoading = {};
   function loadLangPack(l, cb) {
@@ -151,6 +151,85 @@
   }
   function plural(n, one, many) {
     return pluralKey(n, one, many).replace("{n}", n);
+  }
+
+  // ---- pricing region (MSRP shown in US $, CA $ or EU €) --------------------
+  // Nobody should have to pick: the region comes from the computer's own time
+  // zone (America/Toronto → Canada, any Europe/* zone → Europe, else US), with
+  // the browser's language region (en-CA, fr-CA, de-AT…) as a tie-breaker when
+  // the zone says nothing. It all runs in the browser — no location prompt, no
+  // IP-lookup service, and a VPN or office network routed abroad doesn't fool
+  // it. The small US · CA · EU switch is only for the odd case (a US rep quoting
+  // a Canadian store); a manual pick is remembered and beats detection.
+  var REGIONS = {
+    US: { cur: "USD", sym: "$", name: "United States" },
+    CA: { cur: "CAD", sym: "$", name: "Canada" },
+    EU: { cur: "EUR", sym: "€", name: "Europe" },
+  };
+  var REGION_ORDER = ["US", "CA", "EU"];
+  var CA_TZ = /^(Canada\/|America\/(Toronto|Montreal|Vancouver|Edmonton|Winnipeg|Regina|Swift_Current|Halifax|Glace_Bay|Moncton|Goose_Bay|St_Johns|Whitehorse|Dawson|Dawson_Creek|Fort_Nelson|Creston|Yellowknife|Inuvik|Iqaluit|Pangnirtung|Rankin_Inlet|Resolute|Cambridge_Bay|Atikokan|Coral_Harbour|Rainy_River|Thunder_Bay|Nipigon|Blanc-Sablon)$)/;
+  var EU_TZ = /^(Europe\/|Atlantic\/(Canary|Madeira|Azores|Faroe|Faeroe|Reykjavik)$|Arctic\/Longyearbyen$)/;
+  var EU_LANG = /-(AT|BE|BG|CH|CY|CZ|DE|DK|EE|ES|FI|FR|GB|GR|HR|HU|IE|IS|IT|LI|LT|LU|LV|MT|NL|NO|PL|PT|RO|SE|SI|SK)$/i;
+  function isRegion(r) { return own(REGIONS, r); }
+  function detectRegion() {
+    var tz = "";
+    try { tz = Intl.DateTimeFormat().resolvedOptions().timeZone || ""; } catch (e) {}
+    if (CA_TZ.test(tz)) return "CA";
+    if (EU_TZ.test(tz)) return "EU";
+    // An American zone outside Canada is decisive (US). Otherwise (UTC, Asia,
+    // unknown) let the browser's language region speak.
+    if (!/^America\//.test(tz)) {
+      var langs = (navigator.languages && navigator.languages.length) ? navigator.languages : [navigator.language || ""];
+      for (var i = 0; i < langs.length; i++) {
+        if (/-CA$/i.test(langs[i])) return "CA";
+        if (EU_LANG.test(langs[i])) return "EU";
+      }
+    }
+    return "US";
+  }
+  // → { region, auto }. A ?region= link (us|ca|eu) wins and sticks, like ?lang=.
+  function readRegion() {
+    try {
+      var q = ((location.search.match(/[?&]region=([a-z]{2})\b/i) || [])[1] || "").toUpperCase();
+      if (isRegion(q)) { try { localStorage.setItem("portal_region", q); } catch (e2) {} return { region: q, auto: false }; }
+      var s = localStorage.getItem("portal_region");
+      if (isRegion(s)) return { region: s, auto: false };
+    } catch (e) {}
+    return { region: detectRegion(), auto: true };
+  }
+  function fmtMoney(n, r) {
+    var R = REGIONS[r];
+    // Formatted for the portal's language: $49.95 / 49,95 € / 69,95 $. The
+    // currency is already named in the label (MSRP (CAD)), so the narrow "$".
+    try {
+      return new Intl.NumberFormat(state.lang === "en" ? "en-US" : state.lang === "pt" ? "pt-BR" : state.lang, { style: "currency", currency: R.cur, currencyDisplay: "narrowSymbol" }).format(n);
+    } catch (e) { return R.sym + Number(n).toFixed(2); }
+  }
+  // The product's MSRP in the current region, or null when that region's price
+  // list doesn't carry it. Products with no regional table fall back to the
+  // hand-entered USD figure — in the US only.
+  function msrpFor(info, r) {
+    r = r || state.region;
+    if (info.msrpRegion) return info.msrpRegion[r] != null ? fmtMoney(info.msrpRegion[r], r) : null;
+    return r === "US" ? (info.msrp || null) : null;
+  }
+  function regionSwitchHTML() {
+    return '<div class="regionseg" role="group" aria-label="' + escapeHTML(tr("Pricing region")) + '">' +
+      REGION_ORDER.map(function (r) {
+        var on = r === state.region;
+        return '<button type="button" class="regionseg-b' + (on ? " on" : "") + '" data-region="' + r +
+          '" aria-pressed="' + on + '" title="' + escapeHTML(tr(REGIONS[r].name)) + '">' + r + "</button>";
+      }).join("") +
+    "</div>";
+  }
+  function setRegion(r) {
+    if (!isRegion(r)) return;
+    try { localStorage.setItem("portal_region", r); } catch (e) {}
+    state.region = r; state.regionAuto = false;
+    var y = window.pageYOffset;
+    route();
+    if (y) window.scrollTo(0, y);
+    var b = $('.regionseg-b[data-region="' + r + '"]'); if (b) b.focus({ preventScroll: true });
   }
   // Localized training course for a product (falls back to English).
   function trainingOf(p) {
@@ -492,7 +571,10 @@
     fileFacet: "",     // transient: active file-results facet (Photos, Videos, …)
     sort: "featured",  // featured (curated order) | az
     layout: "grid",    // grid | list (applies to the All-products grid)
+    region: "US",      // US | CA | EU — MSRP pricing region (set just below)
+    regionAuto: true,  // true = detected from the computer's location, not picked
   };
+  (function () { var rr = readRegion(); state.region = rr.region; state.regionAuto = rr.auto; })();
 
   function pid(p) { return p.brand + "::" + p.name; }
   function fileKey(folder, file) { return folder + "::" + file.name + "." + (file.format || ""); }
@@ -3028,6 +3110,7 @@ var FACET_ORDER = ["Photos", "Lifestyle", "Logos", "Packaging", "Videos", "Catal
         highlightsHTML(p) +
         fullDescHTML(p) +
         whatsInBoxHTML(p) +
+        partsHTML(p) +
         // ---- PHOTO / VIDEO ASSETS: square folder cards that open inline ----
         // Empty products (no synced files yet) show a friendly note instead.
         '<div class="section-head" id="docs-head"><h2>' + tr("Photo / Video Assets") + "</h2></div>" +
@@ -3431,12 +3514,40 @@ var FACET_ORDER = ["Photos", "Lifestyle", "Logos", "Packaging", "Videos", "Catal
       (missing ? '<p class="pkg-note">' + icon("info") + " " + tr("Fields shown as <strong>—</strong> are still to be confirmed.") + "</p>" : "");
   }
 
+  // Accessories & replacement parts sold on their own, MSRP in the current region.
+  function partsHTML(p) {
+    var parts = (p.info && p.info.parts) || [];
+    if (!parts.length) return "";
+    var R = REGIONS[state.region];
+    // A page with no product MSRP (the Accessories page) has no switch in its
+    // hero, so the table carries it.
+    var ownSwitch = !(p.info.msrp || p.info.msrpRegion);
+    return '<div class="section-head"><h2>' + tr("Accessories & Replacement Parts") + '</h2></div>' +
+      (ownSwitch ? '<div class="ov-region parts-region">' + regionSwitchHTML() +
+        (state.regionAuto ? '<span class="ov-region-note">' + tr("Set by your location") + "</span>" : "") + "</div>" : "") +
+      '<div class="parts-table" role="table" aria-label="' + escapeHTML(tr("Accessories & Replacement Parts")) + '">' +
+        '<div class="parts-row parts-head" role="row"><span role="columnheader">' + tr("Part") + '</span><span role="columnheader">' + tr("SKU") + '</span><span role="columnheader">' + tr("MSRP (" + R.cur + ")") + "</span></div>" +
+        parts.map(function (x) {
+          var v = x.msrp && x.msrp[state.region] != null ? fmtMoney(x.msrp[state.region], state.region) : "—";
+          return '<div class="parts-row" role="row"><span role="cell" class="parts-n">' + escapeHTML(String(x.name).split(" — ").map(tr).join(" — ")) + '</span><span role="cell" class="parts-sku">' + escapeHTML(x.sku) + '</span><span role="cell" class="parts-p">' + v + "</span></div>";
+        }).join("") +
+      "</div>" +
+      (parts.some(function (x) { return !x.msrp || x.msrp[state.region] == null; })
+        ? '<p class="pkg-note">' + icon("info") + " " + tr("— = not on the {region} price list.").replace("{region}", tr(R.name)) + "</p>" : "");
+  }
   // MSRP / warranty facts + FAQ/site CTAs (sits in the hero info column).
   function overviewFactsHTML(p) {
     var info = infoOf(p);
     var faq = info.faqUrl || BRANDS[p.brand].faqUrl;
     var factItems =
-      (info.msrp ? '<div class="ov-fact">' + icon("tag") + '<div class="ov-fact-t"><div class="ov-fact-l">' + tr("MSRP") + '</div><div class="ov-fact-v">' + info.msrp + "</div></div></div>" : "") +
+      ((info.msrp || info.msrpRegion) ? (function () {
+        var R = REGIONS[state.region], price = msrpFor(info);
+        return '<div class="ov-fact ov-msrp">' + icon("tag") + '<div class="ov-fact-t"><div class="ov-fact-l">' + tr("MSRP (" + R.cur + ")") + '</div>' +
+          '<div class="ov-fact-v">' + (price || '<span class="ov-na">' + tr("Not on the {region} price list").replace("{region}", tr(R.name)) + "</span>") + "</div>" +
+          '<div class="ov-region">' + regionSwitchHTML() +
+            (state.regionAuto ? '<span class="ov-region-note">' + tr("Set by your location") + "</span>" : "") +
+          "</div></div></div>";
+      })() : "") +
       (info.warranty ? '<div class="ov-fact">' + icon("shield") + '<div class="ov-fact-t"><div class="ov-fact-l">' + tr("Warranty") + '</div><div class="ov-fact-v">' + info.warranty + "</div></div></div>" : "");
     var ctas =
       (info.manual ? '<a class="btn ghost sm" href="' + info.manual + '" target="_blank" rel="noopener noreferrer">' + icon("file") + " " + tr("Product Manual") + "</a>" : "") +
@@ -4179,6 +4290,11 @@ var FACET_ORDER = ["Photos", "Lifestyle", "Logos", "Packaging", "Videos", "Catal
       langBtn.addEventListener("click", function (e) {
         e.stopPropagation();
         langMenuOpen() ? closeLangMenu() : openLangMenu();
+      });
+      // Pricing-region switch (rendered inside product pages, so delegated).
+      document.addEventListener("click", function (e) {
+        var rb = e.target.closest && e.target.closest(".regionseg-b");
+        if (rb) setRegion(rb.getAttribute("data-region"));
       });
       // Click-away / Escape close, and Escape returns focus to the button.
       document.addEventListener("click", function (e) {

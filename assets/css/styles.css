@@ -1234,3 +1234,34 @@ html.i18n-boot.booting .hero-eyebrow, html.i18n-boot.booting #hero-tagline, html
 .sort button.on { color: #fff; }
 .sf-sub mark { color: var(--ink); }
 
+
+/* ---- MSRP pricing region: auto-set from the computer's location -------------
+   A quiet US · CA · EU switch under the MSRP, only for the odd manual case. */
+.ov-msrp { align-items: flex-start; }
+.ov-msrp > svg { margin-top: 2px; }
+.ov-na { font-weight: 500; color: var(--stone-on-mist); font-size: 12px; }
+.ov-region { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 7px; }
+.ov-region-note { font-size: 11px; color: var(--stone-on-mist); }
+.regionseg { display: inline-flex; border: 1px solid var(--hair); border-radius: 999px; overflow: hidden; background: #fff; }
+.regionseg-b { font: inherit; font-size: 10px; font-weight: 800; letter-spacing: 0.06em; color: var(--stone); background: none; border: none; padding: 4px 9px; cursor: pointer; line-height: 1.2; }
+.regionseg-b + .regionseg-b { border-left: 1px solid var(--hair); }
+.regionseg-b:hover { color: var(--ink); }
+.regionseg-b.on { background: var(--ink); color: #fff; }
+.regionseg-b:focus-visible { outline: 2px solid var(--gold-ink); outline-offset: -2px; }
+@media (hover: none) { .regionseg-b { padding: 9px 13px; font-size: 11px; } }
+
+.parts-table { border: 1px solid var(--hair); border-radius: var(--radius); overflow: hidden; margin-bottom: 10px; max-width: 620px; }
+.parts-row { display: grid; grid-template-columns: minmax(0, 1fr) auto 7.5em; gap: 16px; align-items: center; padding: 11px 16px; border-bottom: 1px solid var(--hair); font-size: 13px; }
+.parts-row:last-child { border-bottom: none; }
+.parts-head { background: var(--mist); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 700; color: var(--stone-on-mist); padding-top: 9px; padding-bottom: 9px; }
+.parts-n { font-weight: 600; min-width: 0; }
+.parts-sku { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; color: var(--stone); }
+.parts-p { text-align: right; font-weight: 700; font-variant-numeric: tabular-nums; }
+.parts-head span:last-child { text-align: right; }
+@media (max-width: 480px) {
+  .parts-row { grid-template-columns: minmax(0, 1fr) auto; row-gap: 2px; }
+  .parts-sku { grid-column: 1; grid-row: 2; }
+  .parts-p { grid-column: 2; grid-row: 1 / span 2; }
+  .parts-head span:nth-child(2) { display: none; }
+}
+.parts-region { margin: -4px 0 12px; }

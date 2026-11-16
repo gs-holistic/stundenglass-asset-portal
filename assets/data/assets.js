@@ -341,6 +341,98 @@ var PRODUCT_MSRP = {
   "Modül": "$499.95",
 };
 
+/* MSRP by pricing region (US $, CA $, EU €) — the region on each product page is
+   auto-set from the visitor's computer (see app.js). From the Hub price lists
+   (STG US WS / STG CA WS / STG EU W), pulled 2026-11-16. A region missing here
+   isn't on that region's list; the page says so instead of guessing. */
+var REGION_MSRP = {
+  "Gravity Infusers":         { US: 449.95, CA: 599.95, EU: 449.95 },
+  "Kompact Gravity Infusers": { US: 599.95, CA: 701.95, EU: 599.95 },
+  "Classic Gravity Infusers": { US: 599.95, CA: 701.95, EU: 599.95 },
+  "Modül":                    { US: 449.95, CA: 599.95, EU: 449.95 },
+};
+/* Accessories & replacement parts per product, MSRP by region (same Hub lists). */
+var PRODUCT_PARTS = {
+  "Gravity Infusers": [
+    { name: "Maintenance Kit", sku: "SG4-MNT-STBK-02", msrp: { US: 29.95, CA: 35.95, EU: 29.95 } },
+    { name: "Silicone Hose Assembly — Black", sku: "SG4-HAS-STBK-02", msrp: { US: 39.95, CA: 54.95, EU: 39.95 } },
+    { name: "Silicone Hose Assembly — Violet Purple", sku: "SG4-HAS-STPU-02", msrp: { US: 39.95, CA: 54.95, EU: 39.95 } },
+    { name: "Silicone Hose Assembly — Olive Green", sku: "SG4-HAS-STGR-02", msrp: { US: 39.95, CA: 54.95, EU: 39.95 } },
+    { name: "Silicone Hose Assembly — Desert Rose", sku: "SG4-HAS-STDR-02", msrp: { US: 39.95, CA: 54.95, EU: 39.95 } },
+    { name: "Silicone Hose Assembly — Velvet Burgundy", sku: "SG4-HAS-STBU-02", msrp: { US: 39.95, CA: 54.95, EU: 39.95 } },
+  ],
+  "Classic Gravity Infusers": [
+    { name: "Maintenance Kit (Classic)", sku: "SG2-MNT-STBK-02", msrp: { US: 29.95, CA: 35.95, EU: 29.95 } },
+    { name: "Single Replacement Large Globe", sku: "SG2-GLB-STBK-02", msrp: { US: 59.95, CA: 77.95, EU: 59.95 } },
+    { name: "Pineapple Globe + Upstem (Small)", sku: "SG2-PPL-GLSS-02", msrp: { US: 79.95, CA: 93.95, EU: 79.95 } },
+    { name: "Hose Tip (Glass)", sku: "SG2-HTP-GLSS-02", msrp: { US: 14.95, CA: 17.95, EU: 14.95 } },
+    { name: "Hose Tip (Plastic)", sku: "SG2-PHT-STBK-02", msrp: { US: 9.95, CA: 11.95, EU: 9.95 } },
+    { name: "Ash Catcher", sku: "SG2-ASH-STBK-02", msrp: { US: 79.95, CA: 103.95, EU: 79.95 } },
+    { name: "Ash Catcher Replacement Glass", sku: "SG2-AGL-GLSS-02", msrp: { US: 29.95, CA: 38.95, EU: 29.95 } },
+    { name: "Uplight", sku: "SG2-ULT-STEE-02", msrp: { US: 39.95, CA: 54.95, EU: 39.95 } },
+    { name: "Travel Case", sku: "SG2-CAS-STBK-02", msrp: { US: 149.95, CA: 199.95, EU: 149.95 } },
+    { name: "Chest Mount", sku: "SG2-CST-STBK-02", msrp: { US: 149.95, CA: 199.95, EU: 149.95 } },
+    { name: "Cleaning Kit", sku: "SG2-CLN-STBK-02", msrp: { US: 19.95, CA: 23.95, EU: 19.95 } },
+  ],
+  "Kompact Gravity Infusers": [
+    { name: "Kompact Globe", sku: "SG3-GLB-GLSS-02", msrp: { US: 39.95, CA: 46.95, EU: 39.95 } },
+    { name: "Kompact Pineapple Globe + Upstem (Small)", sku: "SG3-PPL-GLSS-02", msrp: { US: 59.95, CA: 70.95, EU: 59.95 } },
+    { name: "Kompact Maintenance Kit", sku: "SG3-MNT-STBK-02", msrp: { US: 29.95, CA: 35.95, EU: 29.95 } },
+    { name: "Kompact Uplight", sku: "SG3-ULT-STEE-02", msrp: { US: 39.95, CA: 54.95, EU: 39.95 } },
+    { name: "Glass Liner", sku: "SG3-GBL-GLSS-02", msrp: { US: 29.95, CA: 38.95, EU: 29.95 } },
+    { name: "Kompact Wall Mount", sku: "SG3-WMT-STBK-02", msrp: { US: 49.95, CA: 58.95, EU: 49.95 } },
+    { name: "Kompact Hose Assembly", sku: "SG3-HAS-STBK-02", msrp: { US: 49.95, CA: 58.95, EU: 49.95 } },
+  ],
+  "Modül": [
+    { name: "Modül for Concentrates", sku: "SGM-MKC-STBK-02", msrp: { US: 349.95, CA: 449.95, EU: 349.95 } },
+    { name: "Modül for Dry Material", sku: "SGM-MKS-STBK-02", msrp: { US: 349.95, CA: 449.95, EU: 349.95 } },
+    { name: "Quartz Concentrate Tank", sku: "SGM-CNT-STBK-02", msrp: { US: 74.95, CA: 94.95, EU: 74.95 } },
+    { name: "Dry Material Tank", sku: "SGM-SIT-STBK-02", msrp: { US: 74.95, CA: 94.95, EU: 74.95 } },
+    { name: "Dry Material Vaporization Tank", sku: "SGM-VAP-STBK-02", msrp: { US: 74.95, CA: 94.95 } },
+    { name: "Dok Replacement Glass (Clear)", sku: "SGM-DKG-GLSS-02", msrp: { US: 59.95, CA: 80.95, EU: 59.95 } },
+    { name: "Dok Glass — Recycler", sku: "SGM-DKG-GLRC-02", msrp: { US: 119.95, CA: 164.95, EU: 119.95 } },
+    { name: "Dok Glass — Recycler II", sku: "SGM-DKG-RCV2-02", msrp: { US: 149.95, CA: 199.95, EU: 149.95 } },
+    { name: "Dok Glass — Recycler Cascade", sku: "SGM-DKG-RCL1-02", msrp: { US: 79.95, CA: 109.95, EU: 79.95 } },
+    { name: "Dok Glass — Recycler Silo", sku: "SGM-DKG-RCL2-02", msrp: { US: 79.95, CA: 109.95, EU: 79.95 } },
+    { name: "Glass Carb Cap Assembly with Pearls", sku: "SGM-CCP-STBK-02", msrp: { US: 29.95, CA: 39.95, EU: 29.95 } },
+    { name: "Dok Soft Travel Bag", sku: "SGM-DOK-SBBK-02", msrp: { US: 49.95, CA: 67.95, EU: 49.95 } },
+    { name: "Dok 90º USB-C Charging Cable", sku: "SGM-LCB-STEE-02", msrp: { US: 4.95, CA: 6.95, EU: 4.95 } },
+    { name: "Loading Tool", sku: "SGM-TOL-STBK-02", msrp: { US: 4.95, CA: 5.95, EU: 4.95 } },
+  ],
+  "Accessories": [
+    { name: "Single Replacement Large Globe", sku: "SG2-GLB-STBK-02", msrp: { US: 59.95, CA: 77.95, EU: 59.95 } },
+    { name: "Pineapple Globe + Upstem (Small)", sku: "SG2-PPL-GLSS-02", msrp: { US: 79.95, CA: 93.95, EU: 79.95 } },
+    { name: "Blue Glass Globe", sku: "SG2-BGL-GLSS-02", msrp: { US: 79.95, CA: 93.95, EU: 79.95 } },
+    { name: "Gray Glass Globe", sku: "SG2-MGL-GLSS-02", msrp: { US: 79.95, CA: 93.95, EU: 79.95 } },
+    { name: "Pink Glass Globe", sku: "SG2-PGL-GLSS-02", msrp: { US: 79.95, CA: 93.95, EU: 79.95 } },
+    { name: "Green Glass Globe", sku: "SG2-GGL-GLSS-02", msrp: { US: 79.95, CA: 93.95, EU: 79.95 } },
+    { name: "Bubble Glass Globe", sku: "SG2-RGL-GLSS-02", msrp: { US: 79.95, CA: 93.95, EU: 79.95 } },
+    { name: "Purple Glass Globe", sku: "SG2-UGL-GLSS-02", msrp: { US: 79.95, CA: 93.95, EU: 79.95 } },
+    { name: "The Champion’s Globe (Red)", sku: "SG2-RGV-GLSS-02", msrp: { US: 99.95, CA: 134.95, EU: 99.95 } },
+    { name: "The Champion’s Globe (Clear)", sku: "SG2-CGV-GLSS-02", msrp: { US: 99.95, CA: 134.95, EU: 99.95 } },
+    { name: "The Champion’s Globe (Gray)", sku: "SG2-BGV-GLSS-02", msrp: { US: 99.95, CA: 134.95, EU: 99.95 } },
+    { name: "Hose Tip (Glass)", sku: "SG2-HTP-GLSS-02", msrp: { US: 14.95, CA: 17.95, EU: 14.95 } },
+    { name: "Hose Tip (Plastic)", sku: "SG2-PHT-STBK-02", msrp: { US: 9.95, CA: 11.95, EU: 9.95 } },
+    { name: "Blue Glass Hose Tip", sku: "SG2-BHT-GLSS-02", msrp: { US: 19.95, CA: 23.95, EU: 19.95 } },
+    { name: "Green Glass Hose Tip", sku: "SG2-GHT-GLSS-02", msrp: { US: 19.95, CA: 23.95, EU: 19.95 } },
+    { name: "Pink Glass Hose Tip", sku: "SG2-IHT-GLSS-02", msrp: { US: 19.95, CA: 23.95, EU: 19.95 } },
+    { name: "Gray Glass Hose Tip", sku: "SG2-AHT-GLSS-02", msrp: { US: 19.95, CA: 23.95, EU: 19.95 } },
+    { name: "Bubble Glass Hose Tip", sku: "SG2-RHT-GLSS-02", msrp: { US: 19.95, CA: 23.95, EU: 19.95 } },
+    { name: "The Champion’s Hose Tip", sku: "SG2-HTP-ETGV-02", msrp: { US: 49.95, CA: 64.95, EU: 49.95 } },
+    { name: "Ash Catcher", sku: "SG2-ASH-STBK-02", msrp: { US: 79.95, CA: 103.95, EU: 79.95 } },
+    { name: "Ash Catcher Replacement Glass", sku: "SG2-AGL-GLSS-02", msrp: { US: 29.95, CA: 38.95, EU: 29.95 } },
+    { name: "Ash Catcher — Red", sku: "SG2-ASH-STRD-02", msrp: { US: 79.95, CA: 103.95, EU: 79.95 } },
+    { name: "Ash Catcher — Pink", sku: "SG2-ASH-STPK-02", msrp: { US: 79.95, CA: 103.95, EU: 79.95 } },
+    { name: "Uplight", sku: "SG2-ULT-STEE-02", msrp: { US: 39.95, CA: 54.95, EU: 39.95 } },
+    { name: "Travel Case", sku: "SG2-CAS-STBK-02", msrp: { US: 149.95, CA: 199.95, EU: 149.95 } },
+    { name: "Chest Mount", sku: "SG2-CST-STBK-02", msrp: { US: 149.95, CA: 199.95, EU: 149.95 } },
+    { name: "Cleaning Kit", sku: "SG2-CLN-STBK-02", msrp: { US: 19.95, CA: 23.95, EU: 19.95 } },
+    { name: "Maintenance Kit (Classic)", sku: "SG2-MNT-STBK-02", msrp: { US: 29.95, CA: 35.95, EU: 29.95 } },
+    { name: "Maintenance Kit", sku: "SG4-MNT-STBK-02", msrp: { US: 29.95, CA: 35.95, EU: 29.95 } },
+    { name: "Kompact Maintenance Kit", sku: "SG3-MNT-STBK-02", msrp: { US: 29.95, CA: 35.95, EU: 29.95 } },
+  ],
+};
+
 /* Full official product descriptions (shown under "Official product
    description" with a copy button). Placeholder — add as confirmed. */
 var PRODUCT_DESCRIPTION = {
@@ -464,6 +556,8 @@ var PRODUCT_BOX = {
 window.PORTAL_PRODUCTS.forEach(function (p) {
   p.info = PRODUCT_INFO[p.name] || {};
   if (PRODUCT_MSRP[p.name] && !p.info.msrp) p.info.msrp = PRODUCT_MSRP[p.name];
+  if (REGION_MSRP[p.name]) p.info.msrpRegion = REGION_MSRP[p.name];
+  if (PRODUCT_PARTS[p.name]) p.info.parts = PRODUCT_PARTS[p.name];
   if (PRODUCT_DESCRIPTION[p.name] && !p.info.fullDescription) p.info.fullDescription = PRODUCT_DESCRIPTION[p.name];
   var sk = PRODUCT_SKU[p.name];
   if (sk) Object.keys(sk).forEach(function (k) { if (p.info[k] === undefined) p.info[k] = sk[k]; });
